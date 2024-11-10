@@ -1,1 +1,3 @@
 print("ahoj")
+
+print("zdar")
