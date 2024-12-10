@@ -59,67 +59,52 @@ garpike and stingray are also present.'''
 
 delka = len(TEXTS) #kolik je celkem textu
 
-#print(delka)
+
 print(oddelovac)
 print(f"Vyber jeden z {delka} textu")
 vyber_textu = int(input(f"Zadejte cislo 1 az {delka}: "))
 
 print(oddelovac)
 
-if vyber_textu <= delka:
+if vyber_textu <= delka and vyber_textu > 0:
     print(f"Vybral jsi text {vyber_textu}")
 else:
     print("Vybrali jste cislo mimo vyber")
     quit()
 
-#print(vyber_textu)
+
 
 vybrany_text = TEXTS[vyber_textu-1]
 
-#print(vybrany_text)
-#print(type(vybrany_text))
+
 
 vybrany_split = vybrany_text.replace("-"," ").split() # rozdeleni textu na jendotlive slova
 
 analizovat_text = [slovo.strip(",.-") for slovo in vybrany_split]
 
-#print(type(analizovat_text))
+
 
 pocet_slov = len(analizovat_text) #celkem pocet slov
 
 print(f"Celkove je v textu {pocet_slov} slov")
 
 titul_pismeno = int(0) #Velkz na zacatku
-
-for slovo in analizovat_text:
-    if slovo.istitle():
-        #print("ano")
-        titul_pismeno = titul_pismeno + 1
-    else:
-        continue
-
-velkym_slovo = int(0) #vsechny velke
-
-for slovo in analizovat_text:
-    if slovo.isupper() and slovo.isalpha():
-        velkym_slovo = velkym_slovo + 1
-    else:
-        continue
 malym_slovo = int(0) # vsechny male
-
-for slovo in analizovat_text:
-    if slovo.islower() and slovo.isalpha:
-        malym_slovo = malym_slovo + 1
-    else:
-        continue
+velkym_slovo = int(0) #vsechny velke
 
 pocet_cisel = int(0) #pocet 3cisel
 suma_cisel = [] # suma cisel
 
 for slovo in analizovat_text:
-    if slovo.isnumeric():
+    if slovo.istitle():
+        titul_pismeno = titul_pismeno + 1
+    elif slovo.isnumeric():
         pocet_cisel = pocet_cisel + 1
         suma_cisel.append(int(slovo))
+    elif slovo.islower() and slovo.isalpha:
+        malym_slovo = malym_slovo + 1
+    elif slovo.isupper() and slovo.isalpha():
+        velkym_slovo = velkym_slovo + 1
     else:
         continue
 
@@ -133,8 +118,7 @@ print(f"Suma vsech cisel je: {sum(suma_cisel)}")
 print(oddelovac)
 
 maximalni_delka_slova = max(analizovat_text, key=len)
-#print(maximalni_delka_slova)
-#print(type(maximalni_delka_slova))
+
 
 maximalni_delka_slova_pocet = len(maximalni_delka_slova)
 
@@ -144,9 +128,7 @@ for slovo in analizovat_text:
     if slovo.isalpha():
         delka = max(analizovat_text, key=len)
 
-#print(delka)      
-#print(maximalni_delka_slova_pocet)
-#print(type(maximalni_delka_slova_pocet))
+
 
 pocet_slov_list = []
 
@@ -160,14 +142,10 @@ for slovo in analizovat_text: #delka slova
         continue
 
 
-#print(analizovat_text)
-#print(pocet_slov_list)
-#print(type(pocet_slov_list))
 
-#print(oddelovac)
 
 max_pocet_slov = max(pocet_slov_list)
-#print(max_pocet_slov)
+
 
 z = 1
 print(f"LEN|".rjust(4), "OCCURENCES".center(max_pocet_slov + 1), "|NR".ljust(5))
