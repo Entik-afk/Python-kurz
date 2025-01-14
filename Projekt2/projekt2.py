@@ -6,127 +6,134 @@ email: lech.gajdzica@hotmail.com
 """
 
 import random
+from typing import List
 
 oddelovac = 30 * "-"
 
-"""" program pozdraví užitele a vypíše úvodní text  (viz. níže v ukázkách)"""
+def uvodni_text() -> None:
+    """
+    Vypíše úvodní text hry.
+    """
+    print("Ahoj Hráči")
+    print(oddelovac)
+    print("Vytvořil jsem pro tebe hru!")
+    print("Zahrajeme si bull and cows, takže budeš muset uhádnout čtyřmístnou číslici.")
+    print("Bulls indikuje, kolik číslic jsi uhádl a jsou na správném místě. Pokud jsi uhádl číslici, ale není na místě, kde by měla být, uhádl jsi cows.")
+    print("Hádané číslo nesmí začínat 0, číslice se nesmí opakovat.")
+    print(oddelovac)
 
-print("Ahoj Hráči")
-print(oddelovac)
-print("Vytvořil jsem pro tebe hru!")
-print("Zahrajeme si bull and cows, takže budeš muset uhádnout čtyřmístnou číslici.")
-print("Bulls indikuje, kolik číslic jsi uhádl a jsou na správném místě. Pokud jsi uhádl číslici, ale není na místě, kde by měla být, uhádl jsi cows.")
-print("Hádané číslo nesmí začínat 0, číslice se nesmí opakovat.")
-print(oddelovac)
+def hadane_cislo(od: int, do: int, x: int) -> List[int]:
+    """
+    Vygeneruje seznam náhodných unikátních číslic.
 
-def hadane_cislo(od, do, x):
-    
+    Args:
+        od (int): Začátek rozsahu (včetně).
+        do (int): Konec rozsahu (včetně).
+        x (int): Počet číslic k vygenerování.
+
+    Returns:
+        List[int]: Seznam vygenerovaných číslic.
+    """
     seznam = list(range(od, do))
-
     random.shuffle(seznam)
-
     return seznam[:x]
 
+def tipuj() -> str:
+    """
+    Požádá hráče o hádané číslo a zkontroluje jeho formát.
 
-tajne = hadane_cislo(0,10,4)
-if tajne[0] == 0:
-    tajne = hadane_cislo(0,10,4)
-
-
-
-str_tajne = [str(x) for x in tajne]
-tajne_cislo = int( "".join(str_tajne))
-
-
-
-"""hráč hádá číslo. Program jej upozorní, pokud zadá číslo kratší nebo delší než 4 čísla,
-pokud bude obsahovat duplicity, začínat nulou, příp. obsahovat nečíselné znaky,
-"""
-
-
-def tipuj():
-    tip = str(input("Zadej hádané číslo: "))
-    kontrola = True
-    if len(tip) == 4 and int(tip[0]) != 0 and tip.isnumeric() and tip[0] != tip[1] and tip[0] != tip[2] and tip[0] != tip[3] and tip[1] != tip[2] and tip[1] != tip[3] and tip[2] != tip[3]:
-        
-        kontrola = True
-    else:
-        exit("Nesprávný formát čísla, zahraj si znovu")
-        kontrola = False
-    return tip
-
-
-"""bulls - číslo + umístění"""
-bulls = 0
-
-
-def kolik_bulls():
-    bulls=0
-    y = 0
-    cislo_list_tip = [ int(x) for x in list_tip]
-    while y < 4:
-        if cislo_list_tip[y] == tajne[y]:
-            
-            bulls = bulls + 1
-            y = y + 1
+    Returns:
+        str: Hráčův tip.
+    """
+    while True:
+        tip = input("Zadej hádané číslo: ")
+        if len(tip) == 4 and tip.isnumeric() and int(tip[0]) != 0 and len(set(tip)) == 4:
+            return tip
         else:
-            y = y +1
-        
+            print("Nesprávný formát čísla, zkus to znovu.")
+
+def kolik_bulls(list_tip: List[int], tajne: List[int]) -> int:
+    """
+    Spočítá počet "bulls" (správných číslic na správném místě).
+
+    Args:
+        list_tip (List[int]): Hráčův tip jako seznam číslic.
+        tajne (List[int]): Tajné číslo jako seznam číslic.
+
+    Returns:
+        int: Počet bulls.
+    """
+    bulls = sum(1 for i in range(4) if list_tip[i] == tajne[i])
     return bulls
 
+def vyhodnoceni_bulls(bulls: int, tajne_cislo: int) -> None:
+    """
+    Vypíše hráči počet "bulls" a kontroluje, zda hráč vyhrál.
 
-def vyhodnoceni_bulls():
-    if bulls > 1 and bulls < 4:
-        print(f"Uhádl jsi {bulls} bulls")
-    elif bulls == 4:
+    Args:
+        bulls (int): Počet bulls.
+        tajne_cislo (int): Tajné číslo.
+    """
+    if bulls == 4:
         print(f"Tajné číslo bylo {tajne_cislo}")
         exit("Vyhrál jsi")
-        
+    elif bulls > 1:
+        print(f"Uhádl jsi {bulls} bulls")
     else:
         print(f"Uhádl jsi {bulls} bull")
 
+def kolik_cows(list_tip: List[int], tajne: List[int]) -> int:
+    """
+    Spočítá počet "cows" (správných číslic na špatném místě).
 
+    Args:
+        list_tip (List[int]): Hráčův tip jako seznam číslic.
+        tajne (List[int]): Tajné číslo jako seznam číslic.
 
-def kolik_cows():
-    cows = 0
-    z = 0
-    cislo_list_tip = [ int(x) for x in list_tip]
-    while z < 4:
-
-        if cislo_list_tip[z] in tajne:
-            cows  = cows + 1
-            z = z +1
-        else:
-            z = z + 1
-
+    Returns:
+        int: Počet cows.
+    """
+    cows = sum(1 for cislo in list_tip if cislo in tajne) - kolik_bulls(list_tip, tajne)
     return cows
 
+def vyhodnoceni_cows(cows: int) -> None:
+    """
+    Vypíše hráči počet "cows".
 
-
-def vyhodnoceni_cows():
-    if cows <= 1:
+    Args:
+        cows (int): Počet cows.
+    """
+    if cows == 1:
         print(f"Uhádl jsi {cows} cow")
     else:
         print(f"Uhádl jsi {cows} cows")
 
+def hra() -> None:
+    """
+    Spustí hlavní logiku hry.
+    """
+    tajne = hadane_cislo(0, 10, 4)
+    if tajne[0] == 0:
+        tajne = hadane_cislo(0, 10, 4)
 
-pocet_tipu = 0
-while bulls < 4:
-    bulls = 0
-    cows = 0
-    
-    
-    tip = tipuj()
-    
-    list_tip = list(tip)
-    
-    bulls = kolik_bulls()
-    cows = kolik_cows() - bulls
-    
-    vyhodnoceni_bulls()
-    vyhodnoceni_cows()
-    
-    pocet_tipu = pocet_tipu + 1
-    print(f"Počet tipů je {pocet_tipu}")
-    print(oddelovac)
+    str_tajne = [str(x) for x in tajne]
+    tajne_cislo = int("".join(str_tajne))
 
+    pocet_tipu = 0
+    while True:
+        tip = tipuj()
+        list_tip = [int(x) for x in tip]
+
+        bulls = kolik_bulls(list_tip, tajne)
+        cows = kolik_cows(list_tip, tajne)
+
+        vyhodnoceni_bulls(bulls, tajne_cislo)
+        vyhodnoceni_cows(cows)
+
+        pocet_tipu += 1
+        print(f"Počet tipů je {pocet_tipu}")
+        print(oddelovac)
+
+if __name__ == "__main__":
+    uvodni_text()
+    hra()
